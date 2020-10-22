@@ -7,9 +7,11 @@ import { asyncRouterMap, constantRouterMap } from '@/config/router.config'
  * @param route
  * @returns {boolean}
  */
-function hasPermission (permission, route) {
+/* function hasPermission (permission, route) {
   if (route.meta && route.meta.permission) {
     let flag = false
+    console.log('-------')
+    console.log(route.meta.permission)
     for (let i = 0, len = permission.length; i < len; i++) {
       flag = route.meta.permission.includes(permission[i])
       if (flag) {
@@ -19,7 +21,7 @@ function hasPermission (permission, route) {
     return false
   }
   return true
-}
+} */
 
 /**
  * 单账户多角色时，使用该方法可过滤角色不存在的菜单
@@ -38,16 +40,7 @@ function hasRole(roles, route) {
 }
 
 function filterAsyncRouter (routerMap, roles) {
-  const accessedRouters = routerMap.filter(route => {
-    if (hasPermission(roles.permissionList, route)) {
-      if (route.children && route.children.length) {
-        route.children = filterAsyncRouter(route.children, roles)
-      }
-      return true
-    }
-    return false
-  })
-  return accessedRouters
+  return asyncRouterMap
 }
 
 const permission = {

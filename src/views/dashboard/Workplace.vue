@@ -59,22 +59,22 @@
             </div>
           </a-card>
 
-          <a-card :loading="loading" title="动态" :bordered="false">
-            <a-list>
-              <a-list-item :key="index" v-for="(item, index) in activities">
-                <a-list-item-meta>
-                  <a-avatar slot="avatar" :src="item.user.avatar"/>
-                  <div slot="title">
-                    <span>{{ item.user.nickname }}</span>&nbsp;
-                    在&nbsp;<a href="#">{{ item.project.name }}</a>&nbsp;
-                    <span>{{ item.project.action }}</span>&nbsp;
-                    <a href="#">{{ item.project.event }}</a>
-                  </div>
-                  <div slot="description">{{ item.time }}</div>
-                </a-list-item-meta>
-              </a-list-item>
-            </a-list>
-          </a-card>
+<!--          <a-card :loading="loading" title="动态" :bordered="false">-->
+<!--            <a-list>-->
+<!--              <a-list-item :key="index" v-for="(item, index) in activities">-->
+<!--                <a-list-item-meta>-->
+<!--                  <a-avatar slot="avatar" :src="item.user.avatar"/>-->
+<!--                  <div slot="title">-->
+<!--                    <span>{{ item.user.nickname }}</span>&nbsp;-->
+<!--                    在&nbsp;<a href="#">{{ item.project.name }}</a>&nbsp;-->
+<!--                    <span>{{ item.project.action }}</span>&nbsp;-->
+<!--                    <a href="#">{{ item.project.event }}</a>-->
+<!--                  </div>-->
+<!--                  <div slot="description">{{ item.time }}</div>-->
+<!--                </a-list-item-meta>-->
+<!--              </a-list-item>-->
+<!--            </a-list>-->
+<!--          </a-card>-->
         </a-col>
         <a-col
           style="padding: 0 12px"
@@ -144,7 +144,6 @@ export default {
       timeFix: timeFix(),
       avatar: '',
       user: {},
-
       projects: [],
       loading: true,
       radarLoading: true,
@@ -192,12 +191,12 @@ export default {
   },
   computed: {
     ...mapState({
-      nickname: (state) => state.user.nickname,
-      welcome: (state) => state.user.welcome
+      nickname: (state) => state.name,
+      welcome: (state) => state.welcome
     }),
     currentUser () {
       return {
-        name: 'Serati Ma',
+        name: this.user.name,
         avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'
       }
     },
@@ -206,8 +205,8 @@ export default {
     }
   },
   created () {
-    this.user = this.userInfo
-    this.avatar = this.userInfo.avatar
+    this.user = this.$store.getters.userInfo
+    // this.avatar = this.userInfo.avatar
 
     getRoleList().then(res => {
       // console.log('workplace -> call getRoleList()', res)

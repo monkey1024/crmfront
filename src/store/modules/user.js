@@ -1,6 +1,6 @@
 import storage from 'store'
 import { login, getInfo, logout } from '@/api/login'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { ACCESS_TOKEN, USER_INFO, USER_NAME } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
 const user = {
@@ -38,8 +38,13 @@ const user = {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
           const result = response.result
+          const userInfo = result.user
           storage.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
+          storage.set(USER_NAME, userInfo.name, 7 * 24 * 60 * 60 * 1000)
+          storage.set(USER_INFO, userInfo, 7 * 24 * 60 * 60 * 1000)
           commit('SET_TOKEN', result.token)
+          commit('SET_INFO', userInfo)
+          commit('SET_NAME', { name: userInfo.name, welcome: welcome() })
           resolve()
         }).catch(error => {
           reject(error)
@@ -51,8 +56,7 @@ const user = {
     GetInfo ({ commit }) {
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
-          const result = response.result
-
+          const result = JSON.parse(response.result)
           if (result.role && result.role.permissions.length > 0) {
             const role = result.role
             role.permissions = result.role.permissions
@@ -63,8 +67,7 @@ const user = {
               }
             })
             role.permissionList = role.permissions.map(permission => { return permission.permissionId })
-            commit('SET_ROLES', result.role)
-            commit('SET_INFO', result)
+            commit('SET_ROLES', role)
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }

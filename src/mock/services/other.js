@@ -80,7 +80,7 @@ const orgTree = () => {
   }])
 }
 
-const role = () => {
+export const role = () => {
   return builder({
     'data': [{
       'id': 'admin',
