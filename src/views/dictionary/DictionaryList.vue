@@ -2,11 +2,14 @@
   <a-card :bordered="false">
     <div class="table-operator">
       <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
-      <a-button v-if="selectedRowKeys.length > 0" type="delete" icon="minus" @click="handleDelete">删除</a-button>
+      <a-popconfirm title="确定删除吗?" @confirm="handleDelete">
+        <a-button v-if="selectedRowKeys.length > 0" type="delete" icon="minus">删除</a-button>
+      </a-popconfirm>
+
     </div>
     <s-table
       ref="table"
-      rowKey="key"
+      rowKey="id"
       :columns="columns"
       :data="loadData"
       :rowSelection="rowSelection"
@@ -32,7 +35,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getDictionaryList } from '@/api/manage'
+import { getDictionaryList, addDictionaryType, updateDictionaryType, deleteDictionaryType } from '@/api/manage'
 import DictionaryForm from './modules/DictionaryForm'
 
 export default {
@@ -98,22 +101,25 @@ export default {
       this.visible = true
       this.mdl = { ...record }
     },
-    handleDelete (id) {
-
+    handleDelete () {
+      let ids = ''
+      for (const idKey of this.selectedRowKeys) {
+        ids += idKey + ','
+      }
+      deleteDictionaryType({ ids: ids }).then(res => {
+        this.selectedRowKeys = []
+        this.$refs.table.refresh()
+        this.$message.info(res.message)
+      })
     },
     handleOk () {
       const form = this.$refs.createModal.form
       this.confirmLoading = true
       form.validateFields((errors, values) => {
         if (!errors) {
-          console.log('values', values)
           if (values.id > 0) {
-            // 修改 e.g.
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                resolve()
-              }, 1000)
-            }).then(res => {
+            // 修改
+            updateDictionaryType(values).then(res => {
               this.visible = false
               this.confirmLoading = false
               // 重置表单数据
@@ -121,15 +127,12 @@ export default {
               // 刷新表格
               this.$refs.table.refresh()
 
-              this.$message.info('修改成功')
+              this.$message.info(res.message)
             })
           } else {
             // 新增
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                resolve()
-              }, 1000)
-            }).then(res => {
+            values.id = 0
+            addDictionaryType(values).then(res => {
               this.visible = false
               this.confirmLoading = false
               // 重置表单数据
@@ -137,7 +140,7 @@ export default {
               // 刷新表格
               this.$refs.table.refresh()
 
-              this.$message.info('新增成功')
+              this.$message.info(res.message)
             })
           }
         } else {

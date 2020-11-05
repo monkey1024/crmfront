@@ -17,6 +17,37 @@ const api = {
 
 export default api
 
+// 数据字典
+export function getDictionaryList (parameter) {
+  return request({
+    url: api.dictionary,
+    method: 'get',
+    params: parameter
+  })
+}
+export function addDictionaryType (parameter) {
+  return request({
+    url: api.dictionary,
+    method: 'post',
+    params: parameter
+  })
+}
+export function updateDictionaryType (parameter) {
+  return request({
+    url: api.dictionary,
+    method: 'put',
+    params: parameter
+  })
+}
+
+export function deleteDictionaryType (parameter) {
+  return request({
+    url: api.dictionary,
+    method: 'delete',
+    params: parameter
+  })
+}
+
 export function getCustomerList (parameter) {
   return request({
     url: api.customer,
@@ -31,13 +62,7 @@ export function getFollowList (parameter) {
     params: parameter
   })
 }
-export function getDictionaryList (parameter) {
-  return request({
-    url: api.dictionary,
-    method: 'get',
-    params: parameter
-  })
-}
+
 export function getDepartmentList (parameter) {
   return request({
     url: api.department,
